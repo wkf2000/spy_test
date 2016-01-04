@@ -3,6 +3,7 @@
 import urllib2
 import pytz
 import csv
+import os
 from bs4 import BeautifulSoup
 from datetime import datetime
 from pandas_datareader import data as web
@@ -68,5 +69,7 @@ def download_history(symbols, start, end):
 
 
 if __name__ == '__main__':
+    if not os.path.exists('data'):
+        os.makedirs('data')
     symlist = get_snp500()
     download_history(symlist, START, END)
