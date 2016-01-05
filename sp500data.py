@@ -50,7 +50,6 @@ def get_snp500():
 
 
 def download_history(symbols, start, end):
-    symbols = symbols[:1]
     for ticker in symbols:
         print '\tworking on ' + ticker
         data = web.DataReader(ticker, 'yahoo', start, end)
@@ -64,8 +63,7 @@ def download_history(symbols, start, end):
 
         with open('data/' + ticker + '.csv', 'w') as f:
             data.to_csv(f)
-        # debug
-        # break
+
     print 'Finished downloading data'
 
 
