@@ -63,6 +63,7 @@ def calculation(symbol):
         writer.writerow([key, value])
     return
 
+
 if __name__ == '__main__':
     if not os.path.exists('out'):
         os.makedirs('out')
@@ -72,4 +73,3 @@ if __name__ == '__main__':
         if ext == '.csv':
             print "working on " + symbol
             calculation(symbol)
-
