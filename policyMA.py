@@ -4,12 +4,18 @@ import os
 import datetime
 import pandas as pd
 import csv
+import operator
 
-RANGE = range(-10, 11)
-RANGE.insert(0, -1000)
-RANGE.append(1000)
+RANGE = range(-10, 11, 3)
+RANGE1 = [-100, -30, -20]
+RANGE2 = [20, 30, 100]
+RANGE = RANGE1 + RANGE + RANGE2
+
+#increase 10%+ in 20 days
 PERIOD = 20
 GAIN = 10
+THRESH = 3
+
 PATH = 'data/'
 OUTPATH = 'out/'
 
@@ -58,9 +64,12 @@ def calculation(symbol):
         if zhang_10pct(df, date):
             update_result(df, date, result)
 
+    result_x = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
+
     writer = csv.writer(open(OUTPATH + symbol + '.csv', 'wb'))
-    for key, value in result.items():
-        writer.writerow([key, value])
+    for row in result_x:
+        if row[1] > THRESH:
+            writer.writerow(row)
     return
 
 
