@@ -58,20 +58,9 @@ def calculation(symbol):
         if zhang_10pct(df, date):
             update_result(df, date, result)
 
-    # writer = csv.writer(open(PATH + symbol + '.out.csv', 'w'))
-    # with open(OUTPATH + symbol + '.txt', 'w') as f:
-    #     writer = csv.DictWriter(f, result.keys())
-    #     writer.writerow(result)
-
-    headings = ['key', 'value']
-    try:
-        with open(OUTPATH + symbol + '.txt','w') as myCSVFile:
-            csvWriter = csv.DictWriter(myCSVFile, fieldnames=headings, dialect='excel')
-            csvWriter.writeheader()
-            for data in result:
-                csvWriter.writerow(data)
-    except IOError as (errno, strerror):
-        print("I/O error({0}): {1}".format(errno, strerror))
+    writer = csv.writer(open(OUTPATH + symbol + '.csv', 'wb'))
+    for key, value in result.items():
+        writer.writerow([key, value])
     return
 
 if __name__ == '__main__':

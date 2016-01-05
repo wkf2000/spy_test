@@ -64,8 +64,8 @@ def download_history(symbols, start, end):
 
         with open('data/' + ticker + '.csv', 'w') as f:
             data.to_csv(f)
-        #debug
-        break
+        # debug
+        # break
     print 'Finished downloading data'
 
 
