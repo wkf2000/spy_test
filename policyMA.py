@@ -5,14 +5,15 @@ import datetime
 import pandas as pd
 import csv
 import operator
+import shutil
 
-RANGE = range(-10, 11, 3)
+RANGE = range(-10, 11, 2)
 RANGE1 = [-100, -30, -20]
 RANGE2 = [20, 30, 100]
 RANGE = RANGE1 + RANGE + RANGE2
 
 #increase 10%+ in 20 days
-PERIOD = 20
+PERIOD = 15
 GAIN = 10
 THRESH = 3
 
@@ -65,17 +66,19 @@ def calculation(symbol):
             update_result(df, date, result)
 
     result_x = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
-
-    writer = csv.writer(open(OUTPATH + symbol + '.csv', 'wb'))
+    result = []
     for row in result_x:
         if row[1] > THRESH:
-            writer.writerow(row)
+            result.append(row)
+    writer = csv.writer(open(OUTPATH + symbol + '.csv', 'wb'))
+    writer.writerows(result)
     return
 
 
 if __name__ == '__main__':
-    if not os.path.exists('out'):
-        os.makedirs('out')
+    if os.path.exists('out'):
+        shutil.rmtree('out')
+    os.makedirs('out')
 
     for files in os.listdir(PATH):
         symbol, ext = os.path.splitext(files)

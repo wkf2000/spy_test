@@ -74,5 +74,5 @@ if __name__ == '__main__':
     if not os.path.exists('data'):
         os.makedirs('data')
     symlist = get_snp500()
-    symlist = symlist[:4]
+    symlist = symlist[:8]
     download_history(symlist, START, END)
