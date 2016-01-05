@@ -70,8 +70,9 @@ def calculation(symbol):
     for row in result_x:
         if row[1] > THRESH:
             result.append(row)
-    writer = csv.writer(open(OUTPATH + symbol + '.csv', 'wb'))
-    writer.writerows(result)
+    if len(result) > 0:
+        writer = csv.writer(open(OUTPATH + symbol + '.csv', 'wb'))
+        writer.writerows(result)
     return
 
 
