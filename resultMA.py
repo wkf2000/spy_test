@@ -3,7 +3,9 @@ import os
 import csv
 import operator
 
+
 THRESH = 20
+
 
 def do_job(s, r):
     csv_path = os.path.join('out', s + '.csv')
