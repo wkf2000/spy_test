@@ -52,7 +52,10 @@ def get_snp500():
 def download_history(symbols, start, end):
     for ticker in symbols:
         print '\tworking on ' + ticker
-        data = web.DataReader(ticker, 'yahoo', start, end)
+        try:
+            data = web.DataReader(ticker, 'yahoo', start, end)
+        except Exception:
+            print '\t' + ticker + ' downloading error'
         ma = pd.stats.moments.rolling_mean(data['Close'], 10)
         data['10_MA'] = ma
         data['10_MAC'] = (ma - data['Close']) / data['Close'] * -100
