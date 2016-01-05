@@ -12,7 +12,7 @@ RANGE1 = [-100, -30, -20]
 RANGE2 = [20, 30, 100]
 RANGE = RANGE1 + RANGE + RANGE2
 
-#increase 10%+ in 20 days
+#increase 10%+ in 15 days
 PERIOD = 15
 GAIN = 10
 THRESH = 3
