@@ -6,15 +6,16 @@ import pandas as pd
 import csv
 import operator
 import shutil
+from multiprocessing.dummy import Pool as ThreadPool
 
-RANGE = range(-10, 11, 2)
+RANGE = range(-18, 20, 2)
 RANGE1 = [-100, -30, -20]
 RANGE2 = [20, 30, 100]
 RANGE = RANGE1 + RANGE + RANGE2
 
 #increase 10%+ in 15 days
-PERIOD = 15
-GAIN = 10
+PERIOD = 20
+GAIN = 0.2
 THRESH = 3
 
 PATH = 'data/'
@@ -41,7 +42,7 @@ def find_range(ma10, ma100):
 def zhang_10pct(df, date):
     pp = df.loc[date:date + PERIOD*datetime.timedelta(1), 'Close']
     chg = (pp.max() - pp[0]) / pp[0]
-    if chg > 0.1:
+    if chg >= GAIN:
         return True
     return False
 
@@ -55,7 +56,9 @@ def update_result(df, date, result):
     result[key] += 1
 
 
-def calculation(symbol):
+def calculation(afile):
+    symbol, ext = os.path.splitext(afile)
+    print 'working on ' + symbol
     in_file = os.path.join('data', symbol + '.csv')
     df = pd.read_csv(in_file, index_col='Date', parse_dates=True, usecols=['Date', 'Close', '10_MAC', '100_MAC'])
 
@@ -81,8 +84,14 @@ if __name__ == '__main__':
         shutil.rmtree('out')
     os.makedirs('out')
 
-    for files in os.listdir(PATH):
-        symbol, ext = os.path.splitext(files)
-        if ext == '.csv':
-            print "working on " + symbol
-            calculation(symbol)
+    pool = ThreadPool(4)
+
+    files = os.listdir(PATH)
+    pool.map(calculation, files)
+    pool.close()
+    pool.join()
+    # for files in os.listdir(PATH):
+    #     symbol, ext = os.path.splitext(files)
+    #     if ext == '.csv':
+    #         print "working on " + symbol
+    #         calculation(symbol)
