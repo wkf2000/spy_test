@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+
 import policyMA
 import os
 import csv
 import operator
 
 
-THRESH = 20
+THRESH = 8
 
 
 def do_job(s, r):

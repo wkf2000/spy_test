@@ -85,11 +85,9 @@ if __name__ == '__main__':
 
     symlist = get_snp500()
     symlist = symlist[:16]
-    symlist += EXTRA
+    # symlist += EXTRA
 
-    pool = ThreadPool(1)
-    pool.map(download_history, symlist)
-    pool.close()
-    pool.join()
+    for sym in symlist:
+        download_history(sym)
 
     print 'Finished downloading data'
