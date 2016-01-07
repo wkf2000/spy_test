@@ -13,9 +13,10 @@ RANGE1 = [-100, -30, -20]
 RANGE2 = [20, 30, 100]
 RANGE = RANGE1 + RANGE + RANGE2
 
-#increase 10%+ in 15 days
+#increase 10%+ in 15 days, etc
 PERIOD = 20
 GAIN = 0.2
+LOSE = -0.2
 THRESH = 3
 
 PATH = 'data/'
@@ -39,10 +40,18 @@ def find_range(ma10, ma100):
     return "error"
 
 
-def zhang_10pct(df, date):
+def gain_pct(df, date):
     pp = df.loc[date:date + PERIOD*datetime.timedelta(1), 'Close']
     chg = (pp.max() - pp[0]) / pp[0]
     if chg >= GAIN:
+        return True
+    return False
+
+
+def lose_pct(df, date):
+    pp = df.loc[date:date + PERIOD*datetime.timedelta(1), 'Close']
+    chg = (pp.min() - pp[0]) / pp[0]
+    if chg <= LOSE:
         return True
     return False
 
@@ -65,7 +74,7 @@ def calculation(afile):
     result = init_dict()
 
     for date in df.index:
-        if zhang_10pct(df, date):
+        if lose_pct(df, date):
             update_result(df, date, result)
 
     result_x = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
@@ -84,14 +93,8 @@ if __name__ == '__main__':
         shutil.rmtree('out')
     os.makedirs('out')
 
-    pool = ThreadPool(4)
-
     files = os.listdir(PATH)
+    pool = ThreadPool(4)
     pool.map(calculation, files)
     pool.close()
     pool.join()
-    # for files in os.listdir(PATH):
-    #     symbol, ext = os.path.splitext(files)
-    #     if ext == '.csv':
-    #         print "working on " + symbol
-    #         calculation(symbol)

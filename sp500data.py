@@ -8,11 +8,14 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from pandas_datareader import data as web
 import pandas as pd
+from multiprocessing.dummy import Pool as ThreadPool
+import shutil
 
 
 SITE = "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 START = datetime(2000, 1, 1, 0, 0, 0, 0, pytz.utc)
 END = datetime(2016, 1, 1, 0, 0, 0, 0, pytz.utc)
+EXTRA = ['SPY', 'CIEN']
 
 
 def scrape_list(site):
@@ -49,30 +52,44 @@ def get_snp500():
     return symbols
 
 
-def download_history(symbols, start, end):
-    for ticker in symbols:
-        print '\tworking on ' + ticker
-        try:
-            data = web.DataReader(ticker, 'yahoo', start, end)
-        except Exception:
-            print '\t' + ticker + ' downloading error'
-        ma = pd.stats.moments.rolling_mean(data['Close'], 10)
-        data['10_MA'] = ma
-        data['10_MAC'] = (ma - data['Close']) / data['Close'] * -100
+def download_history(ticker):
+    print '\tworking on ' + ticker
+    try:
+        data = web.DataReader(ticker, 'yahoo', START, END)
+    except Exception:
+        print '\t' + ticker + ' downloading error'
 
-        ma = pd.stats.moments.rolling_mean(data['Close'], 100)
-        data['100_MA'] = ma
-        data['100_MAC'] = (ma - data['Close']) / data['Close'] * -100
+    data.drop(['Open'], axis=1, inplace=True)
+    data.drop(['High'], axis=1, inplace=True)
+    data.drop(['Low'], axis=1, inplace=True)
+    data.drop(['Close'], axis=1, inplace=True)
+    data.drop(['Volume'], axis=1, inplace=True)
+    data.rename(columns={'Adj Close': 'Close'}, inplace=True)
 
-        with open('data/' + ticker + '.csv', 'w') as f:
-            data.to_csv(f)
+    ma = pd.stats.moments.rolling_mean(data['Close'], 10)
+    data['10_MA'] = ma
+    data['10_MAC'] = (ma - data['Close']) / data['Close'] * -100
 
-    print 'Finished downloading data'
+    ma = pd.stats.moments.rolling_mean(data['Close'], 100)
+    data['100_MA'] = ma
+    data['100_MAC'] = (ma - data['Close']) / data['Close'] * -100
+
+    with open('data/' + ticker + '.csv', 'w') as f:
+        data.to_csv(f)
 
 
 if __name__ == '__main__':
-    if not os.path.exists('data'):
-        os.makedirs('data')
+    if os.path.exists('data'):
+        shutil.rmtree('data')
+    os.makedirs('data')
+
     symlist = get_snp500()
     symlist = symlist[:16]
-    download_history(symlist, START, END)
+    symlist += EXTRA
+
+    pool = ThreadPool(1)
+    pool.map(download_history, symlist)
+    pool.close()
+    pool.join()
+
+    print 'Finished downloading data'
