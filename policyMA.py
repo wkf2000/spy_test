@@ -14,9 +14,9 @@ RANGE2 = [20, 30, 100]
 RANGE = RANGE1 + RANGE + RANGE2
 
 #increase 10%+ in 15 days, etc
-PERIOD = 15
-GAIN = 0.1
-LOSE = -0.1
+PERIOD = 60
+GAIN = 0.30
+LOSE = -0.10
 THRESH = 3
 
 PATH = 'data/'
@@ -40,18 +40,11 @@ def find_range(ma10, ma100):
     return "error"
 
 
-def gain_pct(df, date):
+def gain_lose(df, date):
     pp = df.loc[date:date + PERIOD * datetime.timedelta(1), 'Close']
-    chg = (pp.max() - pp[0]) / pp[0]
-    if chg >= GAIN:
-        return True
-    return False
-
-
-def lose_pct(df, date):
-    pp = df.loc[date:date + PERIOD*datetime.timedelta(1), 'Close']
-    chg = (pp.min() - pp[0]) / pp[0]
-    if chg <= LOSE:
+    chg1 = (pp.max() - pp[0]) / pp[0]
+    chg2 = (pp.min() - pp[0]) / pp[0]
+    if chg1 >= GAIN and chg2 >= LOSE:
         return True
     return False
 
@@ -76,7 +69,7 @@ def calculation(afile):
     result = init_dict()
 
     for date in df.index:
-        if gain_pct(df, date):
+        if gain_lose(df, date):
             update_result(df, date, result)
 
     result_x = sorted(result.items(), key=operator.itemgetter(1), reverse=True)

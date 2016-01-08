@@ -8,12 +8,12 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from pandas_datareader import data as web
 import pandas as pd
-from multiprocessing.dummy import Pool as ThreadPool
+# from multiprocessing.dummy import Pool as ThreadPool
 import shutil
 
 
 SITE = "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-START = datetime(2000, 1, 1, 0, 0, 0, 0, pytz.utc)
+START = datetime(2005, 1, 1, 0, 0, 0, 0, pytz.utc)
 END = datetime(2016, 1, 1, 0, 0, 0, 0, pytz.utc)
 EXTRA = ['SPY', 'CIEN']
 
@@ -58,6 +58,7 @@ def download_history(ticker):
         data = web.DataReader(ticker, 'yahoo', START, END)
     except Exception:
         print '\t' + ticker + ' downloading error'
+        return
 
     data.drop(['Open'], axis=1, inplace=True)
     data.drop(['High'], axis=1, inplace=True)
@@ -84,8 +85,8 @@ if __name__ == '__main__':
     os.makedirs('data')
 
     symlist = get_snp500()
-    symlist = symlist[:16]
-    # symlist += EXTRA
+    # symlist = symlist[:100]
+    symlist += EXTRA
 
     for sym in symlist:
         download_history(sym)
