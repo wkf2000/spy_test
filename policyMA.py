@@ -14,9 +14,9 @@ RANGE2 = [20, 30, 100]
 RANGE = RANGE1 + RANGE + RANGE2
 
 #increase 10%+ in 15 days, etc
-PERIOD = 60
-GAIN = 0.30
-LOSE = -0.10
+PERIOD = 20
+GAIN = 0.16
+LOSE = -0.08
 THRESH = 3
 
 PATH = 'data/'

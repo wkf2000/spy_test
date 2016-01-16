@@ -8,14 +8,13 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from pandas_datareader import data as web
 import pandas as pd
-# from multiprocessing.dummy import Pool as ThreadPool
 import shutil
 
 
 SITE = "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 START = datetime(2005, 1, 1, 0, 0, 0, 0, pytz.utc)
 END = datetime(2016, 1, 1, 0, 0, 0, 0, pytz.utc)
-EXTRA = ['SPY', 'CIEN']
+EXTRA = ['SPY', 'CIEN', 'ASHR']
 
 
 def scrape_list(site):
